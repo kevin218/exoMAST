@@ -1,7 +1,7 @@
 
 ############################################
 # Written by Kevin B Stevenson, March 2019
-# For questions email kbs@stsci.edu
+# For questions email kbstevenson@gmail.com
 ############################################
 
 import numpy as np
