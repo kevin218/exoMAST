@@ -342,10 +342,15 @@ def loadRef(name, A=0, f=0.5):
         ref.dur     = 0.1277                        # Transit duration (days), computed using Seager et al. 2003
         ref.Rp      = ref.RpRs*ref.Rs*Rsun/Rjup     # Planet radius
         ref.gp      = planetGravity(ref.Mp, ref.Rp) # Planet gravity
-        ref.Tp      = planetTeq(ref.Ts, ref.aRs, A, f)          # Planet temperature
-        ref.H       = planetScaleHeight(ref.Tp, ref.gp, mu=2.3) # Planet scale height
-        ref.Bp15    = planck(1.5e-6, ref.Tp)        # Planet blackbody at 1.5 microns
-        ref.Bp50    = planck(5.0e-6, ref.Tp)        # Planet blackbody at 5.0 microns
+        ref.Tp_eq   = planetTeq(ref.Ts, ref.aRs, A=0, f=1)          # Planet Equilibrium temperature
+        ref.Tp_day  = planetTeq(ref.Ts, ref.aRs, A=0, f=0.5)        # Planet Dayside temperature
+        ref.H       = planetScaleHeight(ref.Tp_eq, ref.gp, mu=2.3)  # Planet scale height
+        ref.Bp15    = planck(1.5e-6, ref.Tp_day)    # Planet blackbody at 1.5 microns
+        ref.Bp50    = planck(5.0e-6, ref.Tp_day)    # Planet blackbody at 5.0 microns
+        #ref.Tp      = planetTeq(ref.Ts, ref.aRs, A, f)          # Planet temperature
+        #ref.H       = planetScaleHeight(ref.Tp, ref.gp, mu=2.3) # Planet scale height
+        #ref.Bp15    = planck(1.5e-6, ref.Tp)        # Planet blackbody at 1.5 microns
+        #ref.Bp50    = planck(5.0e-6, ref.Tp)        # Planet blackbody at 5.0 microns
         ref.Bs15    = planck(1.5e-6, ref.Ts)        # Stellar blackbody at 1.5 microns
         ref.Bs50    = planck(5.0e-6, ref.Ts)        # Stellar blackbody at 5.0 microns
         ref.FpFs15  = planetStarEmission(ref.RpRs, ref.Bp15, ref.Bs15)
@@ -367,10 +372,15 @@ def loadRef(name, A=0, f=0.5):
         ref.dur     = 0.0483                        # Transit duration (days), Hellier et al. 2011
         ref.Rp      = ref.RpRs*ref.Rs*Rsun/Rjup     # Planet radius
         ref.gp      = planetGravity(ref.Mp, ref.Rp) # Planet gravity
-        ref.Tp      = planetTeq(ref.Ts, ref.aRs, A, f)          # Planet temperature
-        ref.H       = planetScaleHeight(ref.Tp, ref.gp, mu=2.3) # Planet scale height
-        ref.Bp15    = planck(1.5e-6, ref.Tp)        # Planet blackbody at 1.5 microns
-        ref.Bp50    = planck(5.0e-6, ref.Tp)        # Planet blackbody at 5.0 microns
+        ref.Tp_eq   = planetTeq(ref.Ts, ref.aRs, A=0, f=1)          # Planet Equilibrium temperature
+        ref.Tp_day  = planetTeq(ref.Ts, ref.aRs, A=0, f=0.5)        # Planet Dayside temperature
+        ref.H       = planetScaleHeight(ref.Tp_eq, ref.gp, mu=2.3)  # Planet scale height
+        ref.Bp15    = planck(1.5e-6, ref.Tp_day)    # Planet blackbody at 1.5 microns
+        ref.Bp50    = planck(5.0e-6, ref.Tp_day)    # Planet blackbody at 5.0 microns
+        #ref.Tp      = planetTeq(ref.Ts, ref.aRs, A, f)          # Planet temperature
+        #ref.H       = planetScaleHeight(ref.Tp, ref.gp, mu=2.3) # Planet scale height
+        #ref.Bp15    = planck(1.5e-6, ref.Tp)        # Planet blackbody at 1.5 microns
+        #ref.Bp50    = planck(5.0e-6, ref.Tp)        # Planet blackbody at 5.0 microns
         ref.Bs15    = planck(1.5e-6, ref.Ts)        # Stellar blackbody at 1.5 microns
         ref.Bs50    = planck(5.0e-6, ref.Ts)        # Stellar blackbody at 5.0 microns
         ref.FpFs15  = planetStarEmission(ref.RpRs, ref.Bp15, ref.Bs15)
