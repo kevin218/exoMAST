@@ -1,7 +1,7 @@
-# exoMAST_Obs
+# exoMAST
 
 Calculations for the exo.MAST Observability Table
 
 # Installation
 
-	pip install git+https://github.com/kevin218/exoMAST_Obs
+	pip install git+https://github.com/kevin218/exoMAST
