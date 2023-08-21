@@ -23,7 +23,7 @@ d2s  = 86400.           # Days to seconds
 def planetTeq(Ts, aRs, A=0, f=0.5):
     '''
     Compute the planet's equilibrium temperature.
-    
+
     Parameters
     ----------
     Ts      : float or array_like
@@ -34,7 +34,7 @@ def planetTeq(Ts, aRs, A=0, f=0.5):
         Albedo (unitless), default is zero
     f       : float
         Heat redistribution factor (unitless), default is 0.5
-    
+
     Returns
     -------
     Tp      : float or array_like
@@ -45,14 +45,14 @@ def planetTeq(Ts, aRs, A=0, f=0.5):
 def planetGravity(Mp, Rp):
     '''
     Compute the planet's surface gravity in mks units.
-    
+
     Parameters
     ----------
     Mp      : float or array_like
         Planet mass (Jupiter mass)
     Rp      : float or array_like
         Planet radius (Jupiter radii)
-    
+
     Returns
     -------
     gp      : float or array_like
@@ -63,14 +63,14 @@ def planetGravity(Mp, Rp):
 def planetLogg(Mp, Rp):
     '''
     Compute the planet's log surface gravity in cgs units.
-    
+
     Parameters
     ----------
     Mp      : float or array_like
         Planet mass (Jupiter mass)
     Rp      : float or array_like
         Planet radius (Jupiter radii)
-    
+
     Returns
     -------
     logg    : float or array_like
@@ -81,7 +81,7 @@ def planetLogg(Mp, Rp):
 def planetScaleHeight(Tp, gp, mu=2.3):
     '''
     Compute the planet's atmospheric scale height, H.
-    
+
     Parameters
     ----------
     Tp      : float or array_like
@@ -90,7 +90,7 @@ def planetScaleHeight(Tp, gp, mu=2.3):
         Planet gravity (m/s^2)
     mu      : float
         Mean molecular weight (g/mol), default is hydrogen dominated
-    
+
     Returns
     -------
     H       : float or array_like
@@ -101,7 +101,7 @@ def planetScaleHeight(Tp, gp, mu=2.3):
 def planetSignalSize(H, Rp, Rs):
     '''
     Compute the planet's transmission signal size in ppm.
-    
+
     Parameters
     ----------
     H       : float or array_like
@@ -110,7 +110,7 @@ def planetSignalSize(H, Rp, Rs):
         Planet radius (Jupiter radii)
     Rs      : float or array_like
         Stellar radius (Solar radii)
-    
+
     Returns
     -------
     signal  : float or array_like
@@ -121,14 +121,14 @@ def planetSignalSize(H, Rp, Rs):
 def planck(wave, temp):
     '''
     Calculate bolometric flux, B, at a given wavelength.
-    
+
     Parameters
     ----------
     wave    : float or array_like
         Wavelength (meters)
     temp    : float or array_like
         Temperature (K)
-    
+
     Returns
     -------
     B       : float or array_like
@@ -142,7 +142,7 @@ def planck(wave, temp):
 def planetStarEmission(RpRs, Bp, Bs):
     '''
     Calculate the thermal emission planet-to-star flux ratio, Fp/Fs, in ppm.
-    
+
     Parameters
     ----------
     RpRs    : float or array_like
@@ -151,7 +151,7 @@ def planetStarEmission(RpRs, Bp, Bs):
         Planet bolometric flux (W/sr/m^3)
     Bs      : float or array_like
         Stellar bolometric flux (W/sr/m^3)
-    
+
     Returns
     -------
     FpFs    : float or array_like
@@ -162,7 +162,7 @@ def planetStarEmission(RpRs, Bp, Bs):
 def planetStarReflection(RpRs, aRs, Ag):
     '''
     Calculate the reflected light planet-to-star flux ratio in ppm.
-    
+
     Parameters
     ----------
     RpRs    : float or array_like
@@ -171,7 +171,7 @@ def planetStarReflection(RpRs, aRs, Ag):
         Semi-major axis / stellar radius (unitless)
     Ag      : float
         Geometric albedo (unitless)
-    
+
     Returns
     -------
     FpFs    : float or array_like
@@ -182,7 +182,7 @@ def planetStarReflection(RpRs, aRs, Ag):
 def eclipseSNR(RpRs, dur, mag, wave, Tp, Ts, ref_FpFs, ref_dur, ref_mag):
     '''
     Compute the planet's emission signal-to-noise at the given wavelength.
-    
+
     Parameters
     ----------
     RpRs        : float or array_like
@@ -203,7 +203,7 @@ def eclipseSNR(RpRs, dur, mag, wave, Tp, Ts, ref_FpFs, ref_dur, ref_mag):
         Eclipse duration of reference system (days)
     ref_mag     : float or array_like
         Stellar magnitude of reference system
-    
+
     Returns
     -------
     snr         : float or array_like
@@ -218,7 +218,7 @@ def eclipseSNR(RpRs, dur, mag, wave, Tp, Ts, ref_FpFs, ref_dur, ref_mag):
 def transitSNR(signal, dur, mag, ref_signal, ref_dur, ref_mag):
     '''
     Compute the planet's transmission signal-to-noise in the specified band.
-    
+
     Parameters
     ----------
     signal      : float or array_like
@@ -233,7 +233,7 @@ def transitSNR(signal, dur, mag, ref_signal, ref_dur, ref_mag):
         Transit duration of reference system (days)
     ref_mag     : float or array_like
         Stellar magnitude of reference system
-    
+
     Returns
     -------
     snr         : float or array_like
@@ -245,7 +245,7 @@ def transitSNR(signal, dur, mag, ref_signal, ref_dur, ref_mag):
 def TSM(Rp, Mp, Rs, Ts, aRs, jmag):
     '''
     Calculate the transmission spectroscopy metric (TSM) from Kempton et al (2018).
-    
+
     Parameters
     ----------
     Rp          : float or array_like
@@ -260,14 +260,14 @@ def TSM(Rp, Mp, Rs, Ts, aRs, jmag):
         Semi-major axis / stellar radius (unitless)
     jmag        : float or array_like
         Stellar J-band magnitude
-    
+
     Returns
     -------
     tsm         : float or array_like
         Transmission spectroscopy metric
     '''
     # Planet radius in Earth radii
-    Rpe = (Rp*Rjup/Re)  
+    Rpe = (Rp*Rjup/Re)
     # Define radius-dependent scale factor
     if Rpe < 1.5:
         sf = 0.190
@@ -283,7 +283,7 @@ def TSM(Rp, Mp, Rs, Ts, aRs, jmag):
 def ESM(RpRs, Ts, aRs, kmag):
     '''
     Calculate the emission spectroscopy metric (ESM) from Kempton et al (2018).
-    
+
     Parameters
     ----------
     RpRs        : float or array_like
@@ -294,7 +294,7 @@ def ESM(RpRs, Ts, aRs, kmag):
         Semi-major axis / stellar radius (unitless)
     kmag        : float or array_like
         Stellar K-band magnitude
-    
+
     Returns
     -------
     esm         : float or array_like
@@ -306,6 +306,31 @@ def ESM(RpRs, Ts, aRs, kmag):
     FpFs    = planetStarEmission(RpRs, Bp, Bs)
     return 4.29 * FpFs * 10**(-kmag/5.)
 
+def stellarRadius(Ts):
+    '''
+    Estimate the stellar radius using effective temperature from
+    Mann et al (2015); arXiv:1501.01635.
+
+    Parameters
+    ----------
+    Ts          : float or array_like
+        Stellar temperature (K)
+
+    Returns
+    -------
+    Rs          : float or array_like
+        Stellar radius in units of solar radii.
+    '''
+    Teff = np.asarray(Ts).copy()
+    if (Teff < 2700).any() or (Teff > 4100).any():
+        print("Radius values are only valid for 2700 < Ts < 4100 K.")
+        print("All Ts outliers have been set to either 2700 or 4100 K.")
+        Teff[Teff < 2700] = 2700
+        Teff[Teff > 4100] = 4100
+    a, b, c, d = 10.5440, -33.7546, 35.1909, -11.59280
+    x = Teff/3500
+    return a + b*x + c*x**2 + d*x**3
+
 class initObj:
     def __init__(self):
         pass
@@ -313,7 +338,7 @@ class initObj:
 def loadRef(name, A=0, f=0.5):
     '''
     Load parameters for reference system.
-    
+
     Parameters
     ----------
     name    : string
@@ -322,7 +347,7 @@ def loadRef(name, A=0, f=0.5):
         Albedo (unitless), default is zero
     f       : float
         Heat redistribution factor (unitless), default is 0.5
-    
+
     Returns
     -------
     ref     : object
@@ -390,5 +415,3 @@ def loadRef(name, A=0, f=0.5):
         ref.esm     = ESM(ref.RpRs, ref.Ts, ref.aRs, ref.kmag)
         print("Finished loading parameters for " + name)
     return ref
-
-
