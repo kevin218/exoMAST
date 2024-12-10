@@ -146,6 +146,79 @@ def planck(wave, temp):
     return c1 / (wave**5 * (np.exp(val) - 1.))
 
 
+def planck_freq(freq, temp):
+    '''
+    Calculate bolometric flux, B, at a given frequency.
+
+    Parameters
+    ----------
+    freq    : float or array_like
+        Frequency (Hz)
+    temp    : float or array_like
+        Temperature (K)
+
+    Returns
+    -------
+    B       : float or array_like
+        bolometric flux (W/sr/m^2/Hz)
+    '''
+    c1 = 2.*h*freq**3/c**2
+    val = h*freq/k/temp
+    return c1 / (np.exp(val) - 1.)
+
+
+def brightnessTemperature(FpFs, wave, RpRs, Fs, nsteps=10000, FpFs_err=None):
+    '''
+    Calculate the brightness temperature and uncertainties for a planet.
+
+    Parameters
+    ----------
+    FpFs    : float
+        Planet-to-star flux ratio (ppm)
+    wave    : float or array_like
+        Wavelength (meters)
+    RpRs    : float
+        Planet-to-star radius ratio
+    Fs      : float
+        Stellar flux (W/sr/m^3)
+    nsteps  : float (optional)
+        Number of steps in bootstrap calculation. Default is 10000.
+    FpFs_err : float (optional)
+        Uncertainty on planet-to-star flux ratio (ppm)
+
+    Returns
+    -------
+    Tb      : float or array_like
+        Brightness temperature
+    Tb_err  : tuple or array_like (optional)
+        Brightness temperature uncertainty [+ve, -ve]
+    '''
+    # Set up constants for Tb calc
+    hc_k = h*c/k    # m K
+    hc2 = h*c*c     # m4 kg / s3
+
+    if type(wave) != np.ndarray:
+        wave = np.array([wave])
+    
+    FpFs = np.copy(FpFs)/1e6
+    if FpFs_err is None:
+        # Compute brightness temperature without uncertainties
+        Tb = (hc_k/wave)/np.log(1.0+(2.0*hc2*np.pi*RpRs**2)/(wave**5*Fs*FpFs))
+        return Tb
+    else:
+        # Apply bootstrapping to estimate uncertainties
+        foo = np.random.normal(FpFs, FpFs_err/1e6, size=[nsteps, len(wave)])
+        foo[foo < 0] = 0
+        Tb = (hc_k/wave[np.newaxis])/np.log(1.0+(2.0*hc2*np.pi*RpRs**2)/(wave[np.newaxis]**5*Fs*foo))
+        Tb[~np.isfinite(Tb)] = 0
+        temp = np.percentile(Tb, [16, 50, 84], axis=0)[[1, 2, 0]]
+        temp[1] -= temp[0]
+        temp[2] = temp[0]-temp[2]
+        Tb = temp[0]
+        Tb_err = temp[1:]
+        return Tb, Tb_err
+
+
 def planetStarEmission(RpRs, Bp, Bs):
     '''
     Calculate the thermal emission planet-to-star flux ratio, Fp/Fs, in ppm.
@@ -253,7 +326,7 @@ def transitSNR(signal, dur, mag, ref_signal, ref_dur, ref_mag):
     return signal/ref_signal * np.sqrt(fluxRatio) * np.sqrt(dur/ref_dur)
 
 
-def TSM(Rp, Mp, Rs, Ts, aRs, jmag):
+def TSM(Rp, Mp, Rs, Ts, aRs, jmag, Teq=None):
     '''
     Calculate the transmission spectroscopy metric (TSM)
     from Kempton et al (2018).
@@ -272,6 +345,8 @@ def TSM(Rp, Mp, Rs, Ts, aRs, jmag):
         Semi-major axis / stellar radius (unitless)
     jmag        : float or array_like
         Stellar J-band magnitude
+    Teq         : float or array_like (optional)
+        Planet equilibrium temperature (K)
 
     Returns
     -------
@@ -279,21 +354,26 @@ def TSM(Rp, Mp, Rs, Ts, aRs, jmag):
         Transmission spectroscopy metric
     '''
     # Planet radius in Earth radii
-    Rpe = (Rp*Rjup/Re)
+    Rpe = np.asarray(Rp*Rjup/Re)
     # Define radius-dependent scale factor
-    if Rpe < 1.5:
-        sf = 0.190
-    elif Rpe < 2.75:
-        sf = 1.26
-    elif Rpe < 4.0:
-        sf = 1.28
-    else:
-        sf = 1.15
-    Teq = planetTeq(Ts, aRs, A=0, f=1)
+    sf = np.ones(Rpe.size)*1.15
+    sf[Rpe < 4.0] = 1.28
+    sf[Rpe < 2.75] = 1.26
+    sf[Rpe < 1.5] = 0.190
+    # if Rpe < 1.5:
+    #     sf = 0.190
+    # elif Rpe < 2.75:
+    #     sf = 1.26
+    # elif Rpe < 4.0:
+    #     sf = 1.28
+    # else:
+    #     sf = 1.15
+    if Teq is None:
+        Teq = planetTeq(Ts, aRs, A=0, f=1)
     return sf * Rpe**3 * Teq / (Mp*Mjup/Me) / Rs**2 * 10**(-jmag/5.)
 
 
-def ESM(RpRs, Ts, aRs, kmag):
+def ESM(RpRs, Ts, aRs, kmag, Tday=None):
     '''
     Calculate the emission spectroscopy metric (ESM) from Kempton et al (2018).
 
@@ -307,14 +387,17 @@ def ESM(RpRs, Ts, aRs, kmag):
         Semi-major axis / stellar radius (unitless)
     kmag        : float or array_like
         Stellar K-band magnitude
+    Tday        : float or array_like (optional)
+        Planet dayside temperature (K)
 
     Returns
     -------
     esm         : float or array_like
         Emission spectroscopy metric
     '''
-    Tp = planetTeq(Ts, aRs, A=0, f=0.5)    # Dayside temperature
-    Bp = planck(7.5e-6, Tp)
+    if Tday is None:
+        Tday = planetTeq(Ts, aRs, A=0, f=0.5)    # Dayside temperature
+    Bp = planck(7.5e-6, Tday)
     Bs = planck(7.5e-6, Ts)
     FpFs = planetStarEmission(RpRs, Bp, Bs)
     return 4.29 * FpFs * 10**(-kmag/5.)
